@@ -1,9 +1,9 @@
 #include <RFTransmitter.h>
 
 #define NODE_ID          1
-#define OUTPUT_PIN       1
+#define OUTPUT_PIN       11
 
-// Send on digital pin 1 and identify as node 1
+// Send on digital pin 11 and identify as node 1
 RFTransmitter transmitter(OUTPUT_PIN, NODE_ID);
 
 void setup() {}
