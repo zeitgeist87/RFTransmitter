@@ -18,12 +18,11 @@
 #ifndef RFTRANSMITTER_H_
 #define RFTRANSMITTER_H_
 
-#if defined(ARDUINO) && ARDUINO >= 100
-  #include "Arduino.h"
-#elif defined(ENERGIA)
-  #include "Energia.h"
+#if ARDUINO >= 100
+#include "Arduino.h"
 #else
-  #include "WProgram.h"
+#include "WProgram.h"
+#include "pins_arduino.h"
 #endif
 
 
@@ -73,8 +72,8 @@ class RFTransmitter {
 
   public:
     RFTransmitter(byte outputPin, byte nodeId = 0, unsigned int pulseLength = 100,
-        unsigned int backoffDelay = 100, byte resendCount = 3) : nodeId(nodeId), outputPin(outputPin),
-        pulseLength(pulseLength), resendCount(resendCount), packageId(0), backoffDelay(backoffDelay) {
+        unsigned int backoffDelay = 100, byte resendCount = 3) : packageId(0), nodeId(nodeId), outputPin(outputPin),
+        pulseLength(pulseLength), backoffDelay(backoffDelay), resendCount(resendCount) {
 
       pinMode(outputPin, OUTPUT);
       digitalWrite(outputPin, LOW);
