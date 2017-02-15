@@ -1,0 +1,23 @@
+{
+    "name": "RFTransmitter",
+    "description": "Library for low-cost 433 MHz transmitter modules with forward error correction.",
+    "keywords": "transmitter, 433mhz, crc",
+    "authors": [
+        {
+            "name": "Andreas Rohner",
+            "email": "andreas.rohner@gmx.net",
+            "url": "https://andreasrohner.at",
+            "maintainer": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zeitgeist87/RFTransmitter"
+    },
+    "version": "0.1",
+    "homepage": "https://github.com/zeitgeist87/RFTransmitter",
+    "frameworks": "Arduino",
+    "examples": [
+        "examples/*/*.ino"
+    ]
+}
