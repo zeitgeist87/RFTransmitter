@@ -36,29 +36,56 @@ class RFTransmitter {
     unsigned int backoffDelay;
     // How often a reliable package is resent
     byte resendCount;
+    byte lineState;
 
     void send0() {
-      digitalWrite(outputPin, HIGH);
-      delayMicroseconds(pulseLength);
-      digitalWrite(outputPin, LOW);
-      delayMicroseconds(pulseLength * 3);
+      lineState = !lineState;
+      digitalWrite(outputPin, lineState);
+      delayMicroseconds(pulseLength << 1);
     }
 
     void send1() {
-      digitalWrite(outputPin, HIGH);
-      delayMicroseconds(pulseLength * 3);
-      digitalWrite(outputPin, LOW);
+      digitalWrite(outputPin, !lineState);
+      delayMicroseconds(pulseLength);
+      digitalWrite(outputPin, lineState);
       delayMicroseconds(pulseLength);
     }
 
+    void send00() {
+      send0();
+      delayMicroseconds(pulseLength << 1);
+    }
+    void send01() {
+      send1();
+      delayMicroseconds(pulseLength << 1);
+    }
+    void send10() {
+      send1();
+      send0();
+    }
+    void send11() {
+      send1();
+      send1();
+    }
+
     void sendByte(byte data) {
-      byte i = 8;
+      byte i = 4;
       do {
-        if (data & 1)
-          send1();
-        else
-          send0();
-        data >>= 1;
+        switch(data & 3) {
+        case 0:
+          send00();
+          break;
+        case 1:
+          send01();
+          break;
+        case 2:
+          send10();
+          break;
+        case 3:
+          send11();
+          break;
+        }
+        data >>= 2;
       } while(--i);
     }
 
@@ -72,11 +99,12 @@ class RFTransmitter {
 
   public:
     RFTransmitter(byte outputPin, byte nodeId = 0, unsigned int pulseLength = 100,
-        unsigned int backoffDelay = 100, byte resendCount = 3) : packageId(0), nodeId(nodeId), outputPin(outputPin),
+        unsigned int backoffDelay = 100, byte resendCount = 1) : packageId(0), nodeId(nodeId), outputPin(outputPin),
         pulseLength(pulseLength), backoffDelay(backoffDelay), resendCount(resendCount) {
 
       pinMode(outputPin, OUTPUT);
       digitalWrite(outputPin, LOW);
+      lineState = LOW;
     }
 
     void setBackoffDelay(unsigned int millies) { backoffDelay = millies; }

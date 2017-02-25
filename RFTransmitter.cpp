@@ -17,9 +17,11 @@
 
 #include "RFTransmitter.h"
 
-const byte MAX_PAYLOAD_SIZE = 80;
-const byte MIN_PACKAGE_SIZE = 4;
-const byte MAX_PACKAGE_SIZE = MAX_PAYLOAD_SIZE + MIN_PACKAGE_SIZE;
+enum {
+  MAX_PAYLOAD_SIZE = 80,
+  MIN_PACKAGE_SIZE = 4,
+  MAX_PACKAGE_SIZE = MAX_PAYLOAD_SIZE + MIN_PACKAGE_SIZE
+};
 
 #if defined(__AVR__)
 #include <util/crc16.h>
@@ -39,7 +41,10 @@ static inline uint16_t crc_update(uint16_t crc, uint8_t data) {
 }
 
 void RFTransmitter::sendPackage(byte *data, byte len) {
-  sendByte(0xAA);
+  // Synchronize receiver
+  sendByte(0x00);
+  sendByte(0x00);
+  sendByte(0xE0);
 
   // Add from, id and crc to the message
   byte packageLen = len + 4;
@@ -62,10 +67,8 @@ void RFTransmitter::sendPackage(byte *data, byte len) {
   sendByteRed(crc & 0xFF);
   sendByteRed(crc >> 8);
 
-  // Closing pulse then to LOW again
-  digitalWrite(outputPin, HIGH);
-  delayMicroseconds(pulseLength);
   digitalWrite(outputPin, LOW);
+  lineState = LOW;
 }
 
 void RFTransmitter::resend(byte *data, byte len) {
