@@ -28,11 +28,11 @@ RFTransmitter transmitter(OUTPUT_PIN, NODE_ID);
 void setup() {}
 
 void loop() {
-  char *msg = "Hello World!";
+  const char *msg = "Hello World!";
   transmitter.send((byte *)msg, strlen(msg) + 1);
 
   delay(5000);
-  
+
   transmitter.resend((byte *)msg, strlen(msg) + 1);
 }
 ```
