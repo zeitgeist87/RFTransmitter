@@ -36,16 +36,34 @@ class RFTransmitter {
     unsigned int backoffDelay;
     // How often a reliable package is resent
     byte resendCount;
-    byte lineState;
+    #if (ARDUINO_API_VERSION >= 10000)
+      PinStatus lineState;
+    #else
+      byte lineState;
+    #endif
+
+    #if (ARDUINO_API_VERSION >= 10000)
+      PinStatus switchStatus(PinStatus p) {
+        return (p == HIGH) ? LOW : HIGH;
+      }
+    #endif
 
     void send0() {
-      lineState = !lineState;
+      #if (ARDUINO_API_VERSION >= 10000)
+        lineState = switchStatus(lineState);
+      #else
+        lineState = !lineState;
+      #endif
       digitalWrite(outputPin, lineState);
       delayMicroseconds(pulseLength << 1);
     }
 
     void send1() {
-      digitalWrite(outputPin, !lineState);
+      #if (ARDUINO_API_VERSION >= 10000)
+        digitalWrite(outputPin, switchStatus(lineState));
+      #else
+        digitalWrite(outputPin, !lineState);
+      #endif
       delayMicroseconds(pulseLength);
       digitalWrite(outputPin, lineState);
       delayMicroseconds(pulseLength);
